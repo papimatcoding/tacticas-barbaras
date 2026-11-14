@@ -146,3 +146,38 @@ body.playing .right-panel>p{margin:0;font-size:.69rem}
   body.playing .bench-panel{flex-basis:42px}
   body.playing .battle-feedback{flex-basis:22px}
 }
+
+
+/* The home menu is also self-contained: no accidental page-level vertical scroll. */
+body:not(.playing){height:100dvh;overflow:hidden}
+body:not(.playing) #app{height:100dvh;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+body:not(.playing) main{flex:1 1 auto;min-height:0;width:100%;overflow:hidden}
+body:not(.playing) .menu-screen{height:100%;min-height:0;overflow:hidden;padding:clamp(14px,3vh,40px);gap:clamp(12px,3vw,50px)}
+body:not(.playing) .intro h1{font-size:clamp(2rem,4.6vw,4.6rem)}
+body:not(.playing) .hero-board{width:min(100%,min(46vh,440px));margin:auto}
+body:not(.playing) footer{flex:0 0 auto;padding:7px}
+@media(max-width:830px){
+ body:not(.playing) .header{min-height:44px;padding:6px 10px}
+ body:not(.playing) .brand-mark{width:30px;height:30px;font-size:21px}
+ body:not(.playing) .brand strong{font-size:.84rem}
+ body:not(.playing) .brand small{display:none}
+ body:not(.playing) .header>.pill{font-size:.52rem;padding:6px}
+ body:not(.playing) footer{display:none}
+ body:not(.playing) .menu-screen{display:flex;flex-direction:column;justify-content:center;padding:12px 15px;gap:5px}
+ body:not(.playing) .hero-board{display:none}
+ body:not(.playing) .intro h1{font-size:clamp(1.72rem,7vw,2.6rem);letter-spacing:-1px;margin:10px 0}
+ body:not(.playing) .intro>p{font-size:.85rem;line-height:1.4;margin:0}
+ body:not(.playing) .menu-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:16px}
+ body:not(.playing) .button.big{font-size:.73rem;padding:11px 5px;min-height:49px}
+ body:not(.playing) .join-row{margin-top:12px;gap:5px;display:flex;flex-wrap:nowrap}
+ body:not(.playing) .join-row input{min-width:0;flex:1 1 0;width:auto;font-size:.76rem;padding:7px;min-height:40px}
+ body:not(.playing) .join-row #room-code{min-width:0;flex:0 1 88px;width:88px}
+ body:not(.playing) .join-row .button{padding:7px;min-height:40px;font-size:.7rem}
+ body:not(.playing) .notice{margin-top:7px;font-size:.76rem}
+}
+@media(max-width:830px) and (max-height:540px){
+ body:not(.playing) .intro h1{font-size:clamp(1.5rem,5vh,2rem);margin:6px 0}
+ body:not(.playing) .intro>p{font-size:.75rem;line-height:1.25}
+ body:not(.playing) .menu-actions{margin-top:8px}
+ body:not(.playing) .join-row{margin-top:7px}
+}
