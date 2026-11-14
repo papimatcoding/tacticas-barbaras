@@ -13,7 +13,7 @@ const CAMPAIGN=[
 let serial=1;
 let game={mode:"menu",phase:"menu",level:1,round:1,gold:10,hp:20,units:[],shop:[],selected:null,
   frame:null,focus:null,code:null,id:null,players:[],battleToken:0,lastResult:null};
-const socket=window.io({autoConnect:false});
+const socket=window.TBNetwork || window.io({autoConnect:false});
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function note(t){$("battle-message").textContent=t;}
 function menuNote(t){$("menu-message").textContent=t;}
@@ -167,10 +167,10 @@ function render(){
 }
 function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
 async function playback(result,sides,after){
-  game.phase="combat";game.lastResult={sides};const token=++game.battleToken;
+  game.phase="combat";game.lastResult={sides};game.skipPlayback=false;const token=++game.battleToken;
   $("skip-battle").classList.remove("hidden");render();
   for(const fr of result.frames){
-    if(game.battleToken!==token)break;
+    if(game.battleToken!==token||game.skipPlayback)break;
     game.frame=fr;note(fr.message);renderBoard();await sleep(155);
   }
   if(game.battleToken!==token)return;
@@ -265,12 +265,8 @@ function init(){
   $("exit-game").addEventListener("click",()=>{if(game.mode==="pvp")socket.emit("room:leave");window.location.reload();});
   $("skip-battle").addEventListener("click",()=>{
     if(game.phase!=="combat")return;
-    // Mark the playback as skipped; finish using the last known result handler in the current engine.
-    game.battleToken++;
-    game.frame=null;$("skip-battle").classList.add("hidden");
-    if(game.mode==="pvp"){game.phase="waiting";note("Animación omitida. Esperando la siguiente ronda.");}
-    else{game.phase="prepare";note("Animación omitida. Continúa con la misión.");}
-    render();
+    game.skipPlayback=true;
+    note("Resolviendo combate...");
   });
   initSocket();
 }
