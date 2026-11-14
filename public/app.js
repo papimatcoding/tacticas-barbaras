@@ -29,6 +29,7 @@ function reset(mode){
   game={mode,phase:"prepare",level:1,round:1,gold:10,hp:20,units:[newUnit("capibara",1,2,3)],
     shop:[],selected:null,frame:null,focus:null,code:null,id:null,players:[],battleToken:0,lastResult:null};
   rollShop();
+  document.body.classList.add("playing");
   $("menu").classList.add("hidden");$("game").classList.remove("hidden");
   render();
 }
@@ -154,8 +155,10 @@ function render(){
   $("enemy-summary").textContent=pvp?(game.players.length===2?"Cada jugador ve sus unidades abajo.":"Comparte el código para empezar."):(e?.desc||"¡Has ganado!");
   $("room-info").classList.toggle("hidden",!pvp);
   $("room-info").textContent=game.code?"SALA "+game.code:"";
+  $("enemy-banner").textContent=pvp?(game.code?"SALA "+game.code:"CAMPO ENEMIGO"):(e?.name||"CAMPAÑA COMPLETADA");
   $("unit-count").textContent=field().length+" / 5";
-  $("mission-desc").textContent=pvp?"Los dos jugadores preparáis el tablero y pulsáis LISTO. El servidor resuelve el combate.":(e?.desc||"Has derrotado a todos los jefes.");
+  document.querySelector(".bench-panel .section-title h3").textContent="RESERVA · "+field().length+"/5";
+  $("mission-desc").textContent=pvp?"Los dos jugadores preparáis el tablero y pulsáis LISTO. El anfitrión resuelve el combate.":(e?.desc||"Has derrotado a todos los jefes.");
   const selection=game.units.find(u=>u.id===game.selected);
   $("selection-info").textContent=selection?DATA[selection.type].name+" "+("★".repeat(selection.star))+" · Haz clic en una casilla.":"Selecciona una unidad y una casilla.";
   $("reroll").disabled=!canEdit()||game.gold<2;
