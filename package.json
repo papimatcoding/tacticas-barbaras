@@ -1,0 +1,17 @@
+{
+  "name": "tacticas-barbaras",
+  "version": "0.1.0",
+  "description": "Autobattler 2.5D de personajes absurdos con campaña y PvP en salas privadas",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
