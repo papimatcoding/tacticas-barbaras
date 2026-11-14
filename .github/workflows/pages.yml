@@ -37,6 +37,7 @@ jobs:
           mkdir -p dist/shared
           cp public/index.html public/app.js public/network.js public/styles.css dist/
           cp shared/combat.js dist/shared/combat.js
+          cp -R public/assets dist/assets
           touch dist/.nojekyll
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
