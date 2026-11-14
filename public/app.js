@@ -105,14 +105,14 @@ function renderBoard(){
   for(let y=0;y<8;y++)for(let x=0;x<5;x++){
     const u=cards.get(x+":"+y);
     const tile=document.createElement("button");
-    tile.type="button";tile.className="tile "+(y<4?"enemy":"friendly")+(y===3?" frontier":"");
-    if(y>=4&&canEdit()&&game.units.some(v=>v.x===x&&v.y===y-4&&v.id===game.selected))tile.classList.add("selected");
+    tile.type="button";tile.className="cell "+(y<4?"enemy":"friendly")+(y===3?" frontier":"");
     tile.setAttribute("role","gridcell");
     tile.setAttribute("aria-label",(y<4?"Rival":"Tu campo")+" columna "+(x+1)+" fila "+(y+1)+(u?" "+DATA[u.type].name:""));
     if(u){
-      const d=DATA[u.type],percent=u.hp==null?100:Math.round(100*u.hp/u.maxHp);
-      tile.innerHTML='<div class="chip '+(u.foe?"foe ":"")+(u.focus?"focus":"")+'"><span class="stars">'+("★".repeat(u.star))+'</span><span class="avatar">'+d.emoji+'</span><span class="hpbar"><i style="width:'+percent+'%"></i></span></div>';
-    }else if(y>=4&&canEdit()&&game.selected)tile.innerHTML='<span class="tile-hint">COLOCAR</span>';
+      const percent=u.hp==null?100:Math.round(100*u.hp/u.maxHp);
+      const selected=game.units.some(v=>v.id===game.selected&&v.x===u.x&&v.y===u.y-4);
+      tile.innerHTML='<div class="chip '+(u.foe?"foe ":"")+(u.focus||selected?"focus":"")+'"><span class="stars">'+("★".repeat(u.star))+'</span><img class="avatar" src="./assets/characters/'+encodeURIComponent(u.type)+'.svg" alt="'+esc(DATA[u.type].name)+'"><span class="hpbar"><i style="width:'+percent+'%"></i></span></div>';
+    }else if(y>=4&&canEdit()&&game.selected)tile.innerHTML='<span class="tile-hint">+</span>';
     if(y>=4)tile.addEventListener("click",()=>clickCell(x,y-4));
     else tile.disabled=true;
     board.appendChild(tile);
@@ -125,7 +125,7 @@ function renderBench(){
     const d=DATA[u.type],b=document.createElement("button");b.type="button";
     b.className="unit-card "+(game.selected===u.id?"selected":"");
     b.title=d.name+" "+u.star+" estrellas";b.disabled=!canEdit();
-    b.innerHTML='<span class="avatar">'+d.emoji+'</span><span class="stars">'+("★".repeat(u.star))+'</span>';
+    b.innerHTML='<span class="stars">'+("★".repeat(u.star))+'</span><img src="./assets/characters/'+encodeURIComponent(u.type)+'.svg" alt="'+esc(d.name)+'">';
     b.addEventListener("click",()=>selectUnit(u.id));box.appendChild(b);
   });
   for(let i=reserve.length;i<8;i++){const blank=document.createElement("div");blank.className="bench-empty";blank.textContent="+";box.appendChild(blank);}
@@ -137,7 +137,7 @@ function renderShop(){
     if(!type){b.className="shop-card sold";b.textContent="VENDIDO";b.disabled=true;}
     else{
       const d=DATA[type];b.className="shop-card";b.disabled=!canEdit()||game.gold<d.cost;
-      b.innerHTML='<span class="portrait">'+d.emoji+'</span><span class="details"><strong>'+esc(d.name)+'</strong><small>'+esc(d.trait)+'</small></span><span class="price">'+d.cost+' 🪙</span>';
+      b.innerHTML='<span class="portrait"><img src="./assets/characters/'+encodeURIComponent(type)+'.svg" alt="'+esc(d.name)+'"></span><span class="details"><strong>'+esc(d.name)+'</strong><small>'+esc(d.trait)+'</small></span><span class="price">'+d.cost+'</span>';
       b.addEventListener("click",()=>buy(i));
     }box.appendChild(b);
   });
@@ -154,17 +154,17 @@ function render(){
   $("enemy-name").textContent=pvp?(game.players.find(p=>p.id!==game.id)?.name||"Esperando rival..."):(e?.name||"¡Campaña completada!");
   $("enemy-summary").textContent=pvp?(game.players.length===2?"Cada jugador ve sus unidades abajo.":"Comparte el código para empezar."):(e?.desc||"¡Has ganado!");
   $("room-info").classList.toggle("hidden",!pvp);
-  $("room-info").textContent=game.code?"SALA "+game.code:"";
-  $("enemy-banner").textContent=pvp?(game.code?"SALA "+game.code:"CAMPO ENEMIGO"):(e?.name||"CAMPAÑA COMPLETADA");
+  $("room-info").textContent=game.code?game.code:"";
+  $("enemy-banner").textContent=pvp?"RIVAL":"ENEMIGO";
   $("unit-count").textContent=field().length+" / 5";
-  document.querySelector(".bench-panel .section-title h3").textContent="RESERVA · "+field().length+"/5";
-  $("mission-desc").textContent=pvp?"Los dos jugadores preparáis el tablero y pulsáis LISTO. El anfitrión resuelve el combate.":(e?.desc||"Has derrotado a todos los jefes.");
+
+  $("mission-desc").textContent=pvp?"Prepara tu equipo y pulsa LISTO. El anfitrión resuelve el combate.":(e?.desc||"Has derrotado a todos los jefes.");
   const selection=game.units.find(u=>u.id===game.selected);
   $("selection-info").textContent=selection?DATA[selection.type].name+" "+("★".repeat(selection.star))+" · Haz clic en una casilla.":"Selecciona una unidad y una casilla.";
   $("reroll").disabled=!canEdit()||game.gold<2;
   $("remove-selected").disabled=!canEdit()||!selection;
   $("ready").disabled=!canEdit()||field().length===0;
-  $("ready").textContent=pvp?"✓ ESTOY LISTO":"⚔ ¡LUCHAR!";
+  $("ready").textContent=pvp?"LISTO":"LUCHAR";
   $("ready-hint").textContent=pvp?"La ronda comienza cuando ambos estén listos.":"Compra, posiciona y pulsa LUCHAR.";
   renderShop();renderBench();renderBoard();
 }
@@ -271,6 +271,8 @@ function init(){
     game.skipPlayback=true;
     note("Resolviendo combate...");
   });
+  $("open-info").addEventListener("click",()=>{$("info-dialog").showModal();});
+  $("close-info").addEventListener("click",()=>{$("info-dialog").close();});
   initSocket();
 }
 init();

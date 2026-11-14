@@ -1,92 +1,96 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#101827">
-  <meta name="description" content="Tácticas Bárbaras: autobattler 2.5D de personajes absurdos. Campaña y duelos online.">
-  <title>Tácticas Bárbaras · Autobattler 2.5D</title>
-  <link rel="stylesheet" href="./styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="description" content="Tácticas Bárbaras: autobattler 2.5D absurdo, campaña y duelo entre amigos.">
+<title>Tácticas Bárbaras · Autobattler</title>
+<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <div id="app">
-    <header class="header">
-      <div class="brand"><span class="brand-mark">★</span><div><strong>TÁCTICAS <em>BÁRBARAS</em></strong><small>UN AUTOBATTLER ABSURDO</small></div></div>
-      <span class="pill">PROTOTIPO · 0.1</span>
+<div id="app">
+  <section id="menu" class="menu-screen">
+    <div class="menu-card">
+      <div class="brand"><span class="brand-mark">★</span><div><h1>TÁCTICAS <em>BÁRBARAS</em></h1><p>Un autobattler absolutamente absurdo</p></div></div>
+      <p class="menu-desc">Recluta personajes locos, combina tres iguales para conseguir ★★★, prepara tu equipo y que empiece la batalla.</p>
+      <div class="menu-actions">
+        <button id="play-campaign" class="button primary">⚔ CAMPAÑA</button>
+        <button id="create-room" class="button gold">♟ CREAR SALA 1V1</button>
+      </div>
+      <div class="join-row">
+        <input id="player-name" maxlength="18" placeholder="Tu apodo (opcional)" aria-label="Tu apodo">
+        <input id="room-code" maxlength="6" placeholder="CÓDIGO" aria-label="Código de sala" autocomplete="off">
+        <button id="join-room" class="button secondary">UNIRME</button>
+      </div>
+      <p id="menu-message" class="notice" aria-live="polite"></p>
+    </div>
+    <div class="menu-art" aria-hidden="true">
+      <div class="menu-art-title">TU EQUIPO. TUS REGLAS.</div>
+      <div class="menu-art-grid">
+        <img src="./assets/characters/pato.svg" alt="">
+        <img src="./assets/characters/abuela.svg" alt="">
+        <img src="./assets/characters/pereira.svg" alt="">
+        <img src="./assets/characters/tung.svg" alt="">
+      </div>
+      <div class="menu-art-stars">★　★★　★★★</div>
+    </div>
+  </section>
+
+  <section id="game" class="game-screen hidden">
+    <header class="hud">
+      <button id="exit-game" class="back-button" aria-label="Salir al menú"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L4 12l7 7M4 12h16"/></svg></button>
+      <div class="hud-section round"><span id="mode-label">CAMPAÑA</span><strong id="round-label">MISIÓN 1/6</strong></div>
+      <div class="hud-section phase"><span>FASE</span><strong id="phase-label">PREPARACIÓN</strong></div>
+      <div class="hud-section hp"><span>VIDA</span><strong id="hp">∞</strong></div>
+      <div class="hud-section gold-stat"><span>ORO</span><strong><i class="coin"></i><span id="gold">10</span></strong></div>
+      <button id="open-info" class="info-button" aria-label="Información de la misión">i</button>
     </header>
-    <main>
-      <section id="menu" class="menu-screen">
-        <div class="intro">
-          <span class="eyebrow">JUEGO WEB · 2.5D · GRATIS</span>
-          <h1>La estrategia es seria.<br><span>Los personajes no.</span></h1>
-          <p>Recluta personajes disparatados, combínalos hasta las <b>3 estrellas</b>, sitúalos en el tablero y deja que se partan la cara automáticamente.</p>
-          <div class="menu-actions">
-            <button id="play-campaign" class="button primary big">⚔ JUGAR CAMPAÑA</button>
-            <button id="create-room" class="button secondary big">♟ CREAR SALA 1 VS 1</button>
-          </div>
-          <div class="join-row">
-            <input id="player-name" maxlength="18" placeholder="Tu apodo (opcional)" aria-label="Tu apodo">
-            <input id="room-code" maxlength="6" placeholder="CÓDIGO" aria-label="Código de sala" autocomplete="off">
-            <button id="join-room" class="button subtle">UNIRME</button>
-          </div>
-          <p id="menu-message" class="notice" aria-live="polite"></p>
+    <main class="arena-stage">
+      <div class="enemy-bar">
+        <div class="enemy-avatar" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 25h20l-2-12-6 5-2-11-5 11-5-5z" fill="#ffca67" stroke="#a86d27" stroke-width="1.5"/></svg></div>
+        <div class="enemy-summary"><strong id="enemy-name">Patos de barrio</strong><small id="enemy-summary">Prepara tu formación.</small></div>
+        <div id="room-info" class="room-info hidden"></div>
+        <span id="enemy-banner" class="enemy-banner">ENEMIGO</span>
+      </div>
+      <div class="arena-shell">
+        <div class="arena-decor left" aria-hidden="true"></div>
+        <div class="board-wrapper">
+          <div id="board" class="board" role="grid" aria-label="Tablero táctico 5 por 8"></div>
         </div>
-        <div class="hero-board" aria-hidden="true">
-          <div class="hero-grid">
-            <span>🦆</span><span>🦫</span><span>🐜</span><span>👵</span>
-            <span>💼</span><span>🥁</span><span>🚆</span><span>🦦</span>
-            <span>★</span><span>★★</span><span>★★★</span><span>⚔</span>
-          </div>
-        </div>
-      </section>
-      <section id="game" class="game-screen hidden">
-        <div class="status-bar">
-          <div class="status-left"><button id="exit-game" class="button icon-button" aria-label="Salir al menú">↩</button><div><small id="mode-label">CAMPAÑA</small><strong id="round-label">MISIÓN 1 / 6</strong></div></div>
-          <div class="status-right">
-            <span class="stat">❤️ <b id="hp">20</b></span>
-            <span class="stat gold">🪙 <b id="gold">10</b></span>
-            <span id="phase-label" class="pill phase">PREPARACIÓN</span>
-          </div>
-        </div>
-        <div class="game-columns">
-          <aside class="left-panel">
-            <div class="panel enemy-panel"><span class="eyebrow">RIVAL</span><h2 id="enemy-name">Enemigos</h2><p id="enemy-summary">Prepara tu formación.</p><div id="room-info" class="code-display hidden"></div></div>
-            <div class="panel">
-              <span class="eyebrow">TU EQUIPO</span><div class="team-title"><h2 id="unit-count">0 / 5</h2><small>UNIDADES EN CAMPO</small></div>
-              <p>Consigue <b>3 iguales</b> para fusionarlas automáticamente: ★ → ★★ → ★★★.</p>
-              <button id="remove-selected" class="button subtle stretch">RETIRAR SELECCIONADO</button>
-              <div id="selection-info" class="selection-info">Selecciona una unidad y una casilla.</div>
-            </div>
-            <div class="panel compact"><span class="eyebrow">CAMPAÑA</span><p id="mission-desc">Vence a la formación enemiga para desbloquear la siguiente misión.</p></div>
-          </aside>
-          <div class="battle-panel">
-            <div class="battle-heading"><span id="enemy-banner">CAMPO ENEMIGO</span><span class="middle-emblem">⚔</span><span>TU CAMPO</span></div>
-            <div class="arena-wrap">
-              <div id="board" class="board" role="grid" aria-label="Tablero táctico 5 por 8"></div>
-            </div>
-            <div class="battle-feedback"><span id="battle-message" aria-live="polite">Coloca hasta cinco unidades en tus cuatro filas.</span><button id="skip-battle" class="button subtle hidden">SALTAR ANIMACIÓN</button></div>
-            <div class="bench-panel">
-              <div class="section-title"><h3>RESERVA</h3><small>Selecciona y coloca en el tablero</small></div>
-              <div id="bench" class="bench"></div>
-            </div>
-          </div>
-          <aside class="right-panel">
-            <div class="panel shop-panel">
-              <div class="shop-header"><div><span class="eyebrow">RECLUTAMIENTO</span><h2>TIENDA</h2></div><button id="reroll" class="button subtle">↻ 2 🪙</button></div>
-              <div id="shop" class="shop"></div>
-              <p class="hint">Compra unidades. Tres copias del mismo nivel se convierten en una de nivel superior.</p>
-            </div>
-            <button id="ready" class="button primary ready-button">⚔ ¡LUCHAR!</button>
-            <p id="ready-hint" class="muted">La batalla comienza cuando pulses luchar.</p>
-          </aside>
-        </div>
-      </section>
+        <div class="arena-decor right" aria-hidden="true"></div>
+      </div>
+      <div class="battle-feedback">
+        <span id="battle-message" aria-live="polite">Prepara tu formación.</span>
+        <button id="skip-battle" class="button slim hidden">SALTAR</button>
+      </div>
     </main>
-    <footer>Hecho para jugar con amigos · Sin microtransacciones · Personajes de Barbaridades</footer>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
-  <script src="./shared/combat.js"></script>
-  <script src="./network.js"></script>
-  <script src="./app.js"></script>
+    <section class="bottom-dock">
+      <div class="bench-header">
+        <span><b>RESERVA</b> <strong id="unit-count">1 / 5</strong></span>
+        <button id="remove-selected" class="button slim" aria-label="Retirar unidad del campo">RETIRAR</button>
+      </div>
+      <div id="bench" class="bench" aria-label="Banco de unidades"></div>
+      <div class="shop-header">
+        <span>TIENDA</span><button id="reroll" class="button slim">↻ 2 <i class="coin"></i></button>
+      </div>
+      <div class="shop-action-row">
+        <div id="shop" class="shop" aria-label="Comprar unidades"></div>
+        <button id="ready" class="button ready-button primary">LUCHAR</button>
+      </div>
+      <p id="ready-hint" class="sr-only">Compra, coloca y lucha.</p>
+    </section>
+    <dialog id="info-dialog" class="info-dialog">
+      <header><strong>INFORMACIÓN</strong><button type="button" id="close-info" class="button slim">CERRAR</button></header>
+      <p id="mission-desc">Vence al equipo rival para avanzar.</p>
+      <p>Junta 3 minis iguales para subirlas de ★ a ★★ y de ★★ a ★★★.</p>
+      <p id="selection-info">Selecciona una mini y una casilla.</p>
+    </dialog>
+  </section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<script src="./shared/combat.js"></script>
+<script src="./network.js"></script>
+<script src="./app.js"></script>
 </body>
 </html>
